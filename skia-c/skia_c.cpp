@@ -371,10 +371,11 @@ extern "C"
       CANVAS_CAST->save();
       // Translate to the destination position
       CANVAS_CAST->translate(dx, dy);
+      CANVAS_CAST->clipRect(SkRect::MakeWH(d_width, d_height));
       // Scale using the ratio of destination size to source surface size
       CANVAS_CAST->scale(
-          d_width / src_surface->width(),
-          d_height / src_surface->height()
+          d_width / s_width,
+          d_height / s_height
       );
       // Draw the surface directly
       src_surface->draw(CANVAS_CAST, -sx, -sy, sampling, paint);
@@ -845,6 +846,11 @@ extern "C"
   {
     auto new_path = new SkPath(*PATH_CAST);
     return reinterpret_cast<skiac_path *>(new_path);
+  }
+
+  void skiac_picture_destroy(skiac_picture *c_picture)
+  {
+    reinterpret_cast<SkPicture *>(c_picture)->unref();
   }
 
   // SkPictureRecorder
